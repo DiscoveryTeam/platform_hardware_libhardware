@@ -65,11 +65,17 @@ typedef enum {
     POWER_HINT_SUSTAINED_PERFORMANCE = 0x00000006,
     POWER_HINT_VR_MODE = 0x00000007,
     POWER_HINT_LAUNCH = 0x00000008,
-    POWER_HINT_DISABLE_TOUCH = 0x00000009
+    POWER_HINT_DISABLE_TOUCH = 0x00000009,
+    POWER_HINT_CAM_PREVIEW = 0x00000006,
+    POWER_HINT_CPU_BOOST    = 0x00000010,
+    POWER_HINT_LAUNCH_BOOST = 0x00000011,
+    POWER_HINT_AUDIO        = 0x00000020,
+    POWER_HINT_SET_PROFILE  = 0x00000030
 } power_hint_t;
 
 typedef enum {
-    POWER_FEATURE_DOUBLE_TAP_TO_WAKE = 0x00000001
+    POWER_FEATURE_DOUBLE_TAP_TO_WAKE = 0x00000001,
+    POWER_FEATURE_SUPPORTED_PROFILES = 0x00001000
 } feature_t;
 
 /*
@@ -256,6 +262,11 @@ typedef struct power_module {
      *     Touch controller could be disabled in those modes to save power.
      *     The data parameter is non-zero when touch could be disabled, and zero
      *     when touch needs to be re-enabled.
+     * POWER_HINT_CPU_BOOST
+     *
+     *     An operation is happening where it would be ideal for the CPU to
+     *     be boosted for a specific duration. The data parameter is an
+     *     integer value of the boost duration in microseconds.
      *
      * A particular platform may choose to ignore any hint.
      *
@@ -334,6 +345,12 @@ typedef struct power_module {
      * availability: version 0.5
      */
     int (*get_voter_list)(struct power_module *module, size_t *voter);
+
+    /*
+     * (*getFeature) is called to get the current value of a particular
+     * feature or capability from the hardware or PowerHAL
+     */
+    int (*getFeature)(struct power_module *module, feature_t feature);
 
 } power_module_t;
 
